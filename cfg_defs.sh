@@ -2,7 +2,8 @@
 # Translate the lynx_cfg.h and config.cache data into a table, useful for
 # display at runtime.
 
-TOP="${1-.}"
+SRCDIR=`dirname $0`
+
 OUT=cfg_defs.h
 
 # just in case we want to run this outside the makefile
@@ -23,7 +24,7 @@ sed \
 	-e 's/^.[^=]*_cv_//' \
 	-e 's/=\${.*=/=/'  \
 	-e 's/}$//'          \
-	config.cache | $SHELL $TOP/cfg_edit.sh >>$OUT
+	config.cache | /bin/sh ${SRCDIR}/cfg_edit.sh >>$OUT
 
 cat >>$OUT <<EOF
 };
@@ -39,7 +40,7 @@ sed	-e 's@	@ @g' \
 	-e 's@^[ 	]*#define[ 	]*@@' \
 	-e 's@[ ]*/\*.*\*/@@' \
 	-e 's@[ 	][ 	]*@=@' \
-    | $SHELL $TOP/cfg_edit.sh >>$OUT
+    | /bin/sh ${SRCDIR}/cfg_edit.sh >>$OUT
 
 cat >>$OUT <<EOF
 };

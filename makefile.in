@@ -396,7 +396,7 @@ LYHelp.h : help_files.sed LYHelp.hin
 
 cfg_defs.h : $(srcdir)/cfg_defs.sh $(srcdir)/cfg_edit.sh config.cache lynx_cfg.h
 	@rm -f $@
-	$(SHELL) -c 'SHELL=$(SHELL) $(SHELL) $(srcdir)/cfg_defs.sh $(srcdir)'
+	PATH=$(srcdir):$$PATH; export PATH; $(SHELL) -c '$(SHELL) $(srcdir)/cfg_defs.sh'
 
 install-cfg : $(LIBDIR)
 	@$(SHELL) -c '$(srcdir)/scripts/install-cfg.sh "$(INSTALL_DATA)" $(srcdir)/lynx.cfg $(LIBDIR)/lynx.cfg'
