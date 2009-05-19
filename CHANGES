@@ -1,6 +1,11 @@
 Changes since Lynx 2.8 release
 ===============================================================================
 
+2004-10-17 (2.8.5rel.3 fixes from 2.8.6dev.14)
+* eliminate fixed-size buffers in LYExpandHostForURL() to guard against
+  buffer overflow resulting from too-long domain prefix/suffix data from
+  lynx.cfg (report by Ulf Harnhammar, CAN-2005-3120) -TD
+
 2004-04-22 (2.8.5rel.2 fixes from 2.8.6dev.1)
 * correct ifdef in LYgetattrs() to ensure that getattrs() is used only if the
   configure script actually found it (report/patch by Paul Gilmartin).
