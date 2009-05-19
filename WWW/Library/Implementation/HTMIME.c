@@ -2155,8 +2155,8 @@ PRIVATE void HTmmdec_quote ARGS2(
 **	HTmmdecode for ISO-2022-JP - FM
 */
 PUBLIC void HTmmdecode ARGS2(
-	char **,	trg,
-	char *,		str)
+	char **,	target,
+	char *,		source)
 {
     char *buf;
     char *mmbuf = NULL;
@@ -2164,10 +2164,10 @@ PUBLIC void HTmmdecode ARGS2(
     char *s, *t, *u;
     int  base64, quote;
 
-    if ((buf = malloc(strlen(str) + 1)) == 0)
+    if ((buf = malloc(strlen(source) + 1)) == 0)
 	outofmem(__FILE__, "HTmmdecode");
   
-    for (s = str, u = buf; *s;) {
+    for (s = source, u = buf; *s;) {
 	if (!strncasecomp(s, "=?ISO-2022-JP?B?", 16)) {
 	    base64 = 1;
 	} else {
@@ -2181,12 +2181,12 @@ PUBLIC void HTmmdecode ARGS2(
 	if (base64 || quote) {
 	    if (HTmmcont) {
 		for (t = s - 1;
-		    t >= str && (*t == ' ' || *t == '\t'); t--) {
+		    t >= source && (*t == ' ' || *t == '\t'); t--) {
 			u--;
 		}
 	    }
 	    if (mmbuf == 0)	/* allocate buffer big enough for source */
-		StrAllocCopy(mmbuf, str);
+		StrAllocCopy(mmbuf, source);
 	    for (s += 16, t = mmbuf; *s; ) {
 		if (s[0] == '?' && s[1] == '=') {
 		    break;
@@ -2216,7 +2216,7 @@ PUBLIC void HTmmdecode ARGS2(
     }
     *u = '\0';
 end:
-    StrAllocCopy(*t, buf);
+    StrAllocCopy(*target, buf);
     FREE(m2buf);
     FREE(mmbuf);
     FREE(buf);
