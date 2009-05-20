@@ -1199,7 +1199,8 @@ PUBLIC int main ARGS2(
 	    FREE(temp);
 	}
     }
-
+    StrAllocCat(lynx_temp_space, "/lynx-XXXXXXXXXX");
+    lynx_temp_space = mkdtemp(lynx_temp_space);
 #ifdef VMS
     LYLowerCase(lynx_temp_space);
     if (strchr(lynx_temp_space, '/') != NULL) {
@@ -2116,7 +2117,6 @@ PUBLIC int main ARGS2(
 	status = mainloop();
 	LYCloseCloset(RECALL_URL);
 	LYCloseCloset(RECALL_MAIL);
-	cleanup();
 #if defined(PDCURSES) && defined(PDC_BUILD) && PDC_BUILD >= 2401
 	if (! isendwin()) {
 	    extern int saved_scrsize_x;
@@ -2126,6 +2126,7 @@ PUBLIC int main ARGS2(
 	    }
 	}
 #endif
+	cleanup();
 	exit(status);
     }
 
