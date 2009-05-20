@@ -69,7 +69,7 @@ PRIVATE int remote_session ARGS2(char *, acc_method, char *, host)
 	 *  or tab to prevent security whole
 	 */
 	for(cp = host; *cp != '\0'; cp++) {
-	    if(!isalnum(*cp) && *cp != '_' && *cp != '-' &&
+	    if(!isalnum(UCH(*cp)) && *cp != '_' && *cp != '-' &&
 				*cp != ':' && *cp != '.' && *cp != '@') {
 		*cp = '\0';
 		break;
@@ -168,24 +168,41 @@ PRIVATE int remote_session ARGS2(char *, acc_method, char *, host)
 #define TELNET_DONE
 #endif
 
-/* Most unix machines suppport username only with rlogin */
-#if defined(unix) || defined(DOSPATH)
-#ifndef TELNET_DONE
-	if (login_protocol == rlogin) {
-	    snprintf(command, sizeof(command) - 1, "%s %s%s%s", RLOGIN_COMMAND,
-		hostname,
-		user ? " -l " : "",
-		user ? user : "");
+/* Most unix machines support username only with rlogin */
+#if !defined(TELNET_DONE) && (defined(UNIX) || defined(DOSPATH) || defined(__CYGWIN__))
 
-	} else if (login_protocol == tn3270) {
-	    snprintf(command, sizeof(command) - 1, "%s %s %s", TN3270_COMMAND,
-		hostname,
-		port ? port : "");
+#define FMT_RLOGIN "%s %s%s%s"
+#define FMT_TN3270 "%s %s %s"
+#define FMT_TELNET "%s %s %s"
 
-	} else {  /* TELNET */
-	    snprintf(command, sizeof(command) - 1, "%s %s %s", TELNET_COMMAND,
-		hostname,
-		port ? port : "");
+	switch (login_protocol) {
+	case rlogin:
+	    if ((program = HTGetProgramPath(ppRLOGIN)) != NULL) {
+		HTAddParam(&command, FMT_RLOGIN, 1, program);
+		HTAddParam(&command, FMT_RLOGIN, 2, hostname);
+		HTOptParam(&command, FMT_RLOGIN, 3, user ? " -l " : "");
+		HTAddParam(&command, FMT_RLOGIN, 4, user);
+		HTEndParam(&command, FMT_RLOGIN, 4);
+	    }
+	    break;
+
+	case tn3270:
+	    if ((program = HTGetProgramPath(ppTN3270)) != NULL) {
+		HTAddParam(&command, FMT_TN3270, 1, program);
+		HTAddParam(&command, FMT_TN3270, 2, hostname);
+		HTAddParam(&command, FMT_TN3270, 3, port);
+		HTEndParam(&command, FMT_TN3270, 3);
+	    }
+	    break;
+
+	case telnet:
+	    if ((program = HTGetProgramPath(ppTELNET)) != NULL) {
+		HTAddParam(&command, FMT_TELNET, 1, program);
+		HTAddParam(&command, FMT_TELNET, 2, hostname);
+		HTAddParam(&command, FMT_TELNET, 3, port);
+		HTEndParam(&command, FMT_TELNET, 3);
+	    }
+	    break;
 	}
 
         LYSystem(command);
