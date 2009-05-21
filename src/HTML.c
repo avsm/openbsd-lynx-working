@@ -5152,6 +5152,7 @@ static int HTML_start_element(HTStructured * me, int element_number,
 		 */
 		I.accept_cs = NULL;
 		I.name_cs = -1;
+		I.maxlength = NULL;
 		I.value_cs = current_char_set;
 
 		I.type = "OPTION";
